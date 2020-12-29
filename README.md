@@ -6,7 +6,7 @@ CLI tools to simplify gRPC services and clients
 **Developer Environment**
 
 ```bash
-pip install -r requirements_dev.txt
+make env
 ``` 
 
 

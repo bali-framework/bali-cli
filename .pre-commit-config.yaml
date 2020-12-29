@@ -1,0 +1,9 @@
+# 安装: pre-commit install
+# 卸载: pre-commit uninstall
+
+repos:
+    - repo: https://github.com/pre-commit/mirrors-yapf
+      rev: v0.30.0
+      hooks:
+        - id: yapf
+          args: ['--style=.style.yapf', '--parallel', '--in-place']
