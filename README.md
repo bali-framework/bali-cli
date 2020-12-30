@@ -11,7 +11,7 @@ make env
 
 ```examples
 # setup examples environments
-cd examples && git clone https://github.com/JoshYuJump/bali-cli-example-proto proto
+cd examples && git clone https://github.com/JoshYuJump/bali-cli-example-proto
 ```
 
 
