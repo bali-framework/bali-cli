@@ -130,3 +130,6 @@ dmypy.json
 
 # PyCharm settings
 .idea/
+
+# examples' gateway service
+examples/gateway_service/*

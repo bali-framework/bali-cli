@@ -9,6 +9,11 @@ CLI tools to simplify gRPC services and clients
 make env
 ``` 
 
+```examples
+# setup examples environments
+cd examples && git clone https://github.com/JoshYuJump/bali-cli-example-proto proto
+```
+
 
 **Tag a new release**
 
