@@ -1,6 +1,8 @@
+import typer
+
 from os import system, makedirs
-from shutil import copyfile
 from pathlib import Path
+from shutil import copyfile
 
 from git import Repo
 
@@ -27,6 +29,8 @@ def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
 
 def get_newest_proto_file_to_current_repo(service: str) -> None:
     work_dir = Path.cwd()
+    typer.echo(f'> Current work directory is {work_dir}')
+
     source_repo_dir = prepare_source_repo(work_dir)
     dst_dir = prepare_current_repo(work_dir)
 
