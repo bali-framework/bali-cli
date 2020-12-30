@@ -5,8 +5,8 @@ from pathlib import Path
 from git import Repo
 
 
-def prepare_source_repo(work_dir: Path) -> Path:
-    source_repo_dir = work_dir.parent / "proto"
+def prepare_source_repo(work_dir: Path, repo_name: str) -> Path:
+    source_repo_dir = work_dir.parent / repo_name
     source_repo = Repo(source_repo_dir)
     source_repo.git.checkout("master")
     source_repo.git.pull()
@@ -25,9 +25,9 @@ def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
     system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_file_name}")
 
 
-def get_newest_proto_file_to_current_repo(service: str) -> None:
+def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
     work_dir = Path.cwd()
-    source_repo_dir = prepare_source_repo(work_dir)
+    source_repo_dir = prepare_source_repo(work_dir, repo_name)
     dst_dir = prepare_current_repo(work_dir)
 
     # 拷贝 proto 文件
