@@ -15,7 +15,7 @@ class TestPrepareSourceRepo:
     work_dir = Path.cwd()
 
     @property
-    def test_repo_base_git_url(self):
+    def repo_base_git_url(self):
         return f"https://github.com/JoshYuJump/{self.test_repo_name}.git"
 
     @property
@@ -34,7 +34,7 @@ class TestPrepareSourceRepo:
 
     def test_prepare_source_repo_with_repo_dir_exist_and_is_repo(self):
         self.source_repo_dir.mkdir()
-        Repo.clone_from(self.test_repo_base_git_url, self.source_repo_dir)
+        Repo.clone_from(self.repo_base_git_url, self.source_repo_dir)
 
         biz.prepare_source_repo(self.work_dir, self.test_repo_name)
 
@@ -52,17 +52,11 @@ class TestPrepareCurrentRepo:
     work_dir = Path.cwd()
     test_repo_name = "bali-cli-example-proto"
     dst_dir = work_dir / "clients" / "intermediates"
-
-    @property
-    def test_repo_base_git_url(self):
-        return f"https://github.com/JoshYuJump/{self.test_repo_name}.git"
-
-    @property
-    def source_repo_dir(self):
-        return self.work_dir.parent / self.test_repo_name
+    source_repo_dir = work_dir.parent / test_repo_name
+    repo_base_git_url = f"https://github.com/JoshYuJump/{test_repo_name}.git"
 
     def setup_class(self):
-        Repo.clone_from(self.test_repo_base_git_url, self.source_repo_dir)
+        Repo.clone_from(self.repo_base_git_url, self.source_repo_dir)
         biz.prepare_source_repo(self.work_dir, self.test_repo_name)
 
     def teardown_class(self):
@@ -105,18 +99,12 @@ class TestGetNewestProtoFileToCurrentRepo:
     test_repo_name = "bali-cli-example-proto"
     dst_dir = work_dir / "clients" / "intermediates"
     service = "greeter"
-
-    @property
-    def test_repo_base_git_url(self):
-        return f"https://github.com/JoshYuJump/{self.test_repo_name}.git"
-
-    @property
-    def source_repo_dir(self):
-        return self.work_dir.parent / self.test_repo_name
+    repo_base_git_url = f"https://github.com/JoshYuJump/{test_repo_name}.git"
+    source_repo_dir = work_dir.parent / test_repo_name
 
     def setup_class(self):
         self.source_repo_dir.mkdir(exist_ok=True)
-        Repo.clone_from(self.test_repo_base_git_url, self.source_repo_dir)
+        Repo.clone_from(self.repo_base_git_url, self.source_repo_dir)
 
     def teardown_class(self):
         rmtree(self.source_repo_dir, ignore_errors=True)

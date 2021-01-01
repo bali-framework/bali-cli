@@ -14,3 +14,4 @@ ignore_errors = False
 omit =
     tests/*
     cli/main.py
+    cli/__init__.py

@@ -6,7 +6,7 @@ CLI tools to simplify gRPC services and clients
 **Developer Environment**
 
 ```bash
-make env
+make init
 ``` 
 
 ```examples
@@ -28,3 +28,8 @@ push tags to remote:
 ```bash
 git push --tags
 ```
+
+**Get a test report**
+```bash
+make test
+``` 
