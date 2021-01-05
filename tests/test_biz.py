@@ -1,7 +1,7 @@
 from pathlib import Path
 from filecmp import cmpfiles
 from shutil import rmtree
-from os import makedirs
+from os import makedirs, remove
 
 import pytest
 from git import Repo
@@ -116,3 +116,31 @@ class TestGetNewestProtoFileToCurrentRepo:
         assert cmpfiles(self.source_repo_dir, self.dst_dir, f"{self.service}.proto")
         assert (self.dst_dir / f"{self.service}_pb2.py").exists()
         assert (self.dst_dir / f"{self.service}_pb2_grpc.py").exists()
+
+
+class TestCompileClientFile:
+    base_dir = Path.cwd() / "examples" / "bali-cli-example-proto"
+    greeter_service = "greeter"
+    helloworld_service = "helloworld"
+    helloworld_path = base_dir / helloworld_service
+    greeter_path = base_dir / greeter_service
+
+    def test_with_greeter(self):
+        biz.compile_client_file(
+            self.greeter_path / f"{self.greeter_service}.proto",
+            self.greeter_service,
+        )
+
+    def test_with_helloworld(self):
+        biz.compile_client_file(
+            self.helloworld_path / f"{self.helloworld_service}.proto",
+            self.helloworld_service,
+        )
+
+    def teardown_method(self):
+        helloworld = self.helloworld_path / f"{self.helloworld_service}_client.py"
+        greeter = self.greeter_path / f"{self.greeter_service}_client.py"
+        helloworld.unlink(missing_ok=True)
+        greeter.unlink(missing_ok=True)
+
+    setup_method = teardown_method
