@@ -16,6 +16,7 @@ class {{ service }}Client:
         with insecure_channel(self.URL) as channel:
             stub = {{ filename }}_pb2_grpc.{{ service }}Stub(channel)
     {% if method[1] == "google.protobuf.Empty" %}
+            logger.info("greeting rpc send nothing")
             response = stub.{{ method[0] }}()
     {% else %}
             payload = schema.dict()
