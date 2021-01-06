@@ -1,8 +1,8 @@
+decamelize==0.1.2
 grpcio==1.32.0
 grpcio-tools==1.32.0
-typer==0.3.2
 GitPython==3.1.11
 jinja2==2.11.2
 protobuf2pydantic
 pydantic==1.7.3
-decamelize==0.1.2
+typer==0.3.2

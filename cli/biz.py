@@ -30,8 +30,8 @@ def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
 
 
 def compile_client_file(proto_path: Path, service_name: str):
-    service_pattern = re.compile(r"^service (.*?)[\s{]+$")
-    rpc_pattern = re.compile(r"\s+rpc\s+(.*?)[\s(]+(.*?)[)\s]+returns[\s(]+(.*?)[)\s{]+")
+    service_pattern = re.compile(r"^service\s+(.*?)\s+{$")
+    rpc_pattern = re.compile(r"\s+rpc\s+(.*?)[\s(]+(.*?)[)\s]+returns[\s(]+(.*?)[)\s]+{")
 
     # 按照项目约定，一个 proto 文件中只有一个 service
     service, methods = None, []

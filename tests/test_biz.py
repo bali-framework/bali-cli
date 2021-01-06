@@ -1,7 +1,7 @@
 from pathlib import Path
 from filecmp import cmpfiles
 from shutil import rmtree
-from os import makedirs, remove
+from os import makedirs
 
 import pytest
 from git import Repo
