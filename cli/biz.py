@@ -30,8 +30,8 @@ def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
 
 
 def compile_client_file(proto_path: Path, service_name: str):
-    service_pattern = re.compile(r"^service (.*) {$")
-    rpc_pattern = re.compile(r"\s+ rpc (.*?)[(](.*?)[)] returns [(](.*?)[)] {")
+    service_pattern = re.compile(r"^service (.*?)[\s{]+$")
+    rpc_pattern = re.compile(r"\s+rpc\s+(.*?)[\s(]+(.*?)[)\s]+returns[\s(]+(.*?)[)\s{]+")
 
     # 按照项目约定，一个 proto 文件中只有一个 service
     service, methods = None, []
@@ -75,3 +75,4 @@ def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
     compile_proto_file(dst_dir, proto_file_name)
     compile_client_file(dst_proto_path, service)
     system(f"pb2py {dst_dir / f'{service}_pb2.py'} > {dst_dir / f'{service}_schema.py'}")
+    (dst_dir / "__init__.py").touch(exist_ok=True)

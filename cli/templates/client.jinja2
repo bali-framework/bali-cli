@@ -1,5 +1,6 @@
 import logging
 from typing import Dict
+from inspect import currentframe
 
 from grpc import insecure_channel
 from google.protobuf.json_format import MessageToDict
@@ -15,16 +16,17 @@ class {{ service }}Client:
     def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}) -> {{ filename }}_schema.{{ method[2] }}:
         with insecure_channel(self.URL) as channel:
             stub = {{ filename }}_pb2_grpc.{{ service }}Stub(channel)
+            class_name, func_name = type(self).__name__, currentframe().f_code.co_name
     {% if method[1] == "google.protobuf.Empty" %}
-            logger.info("greeting rpc send nothing")
+            logger.info("gRPC client %s.%s send nothing", class_name, func_name)
             response = stub.{{ method[0] }}()
     {% else %}
             payload = schema.dict()
-            logger.info("greeting rpc send: %s", payload)
+            logger.info("{gRPC client %s.%s send: %s", class_name, func_name, payload)
             request = {{ filename }}_pb2.{{ method[1] }}(**payload)
             response = stub.{{ method[0] }}(request)
     {% endif %}
             rely = MessageToDict(response, True, True)
-            logger.info("greeting rpc received: %s", rely)
+            logger.info("gRPC client %s.%s received: %s", class_name, func_name, rely)
             return {{ filename }}_schema.{{ method[2] }}(**rely)
 {% endfor %}
