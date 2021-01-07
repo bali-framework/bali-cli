@@ -1,6 +1,18 @@
 # bali-cli
 CLI tools to simplify gRPC services and clients
 
+
+## Cli commands 
+
+**bali add {service}**
+
+Add service to clients folder 
+
+**bali update {service}**
+
+Update service 
+
+
 ### CONTRIBUTE
 
 **Developer Environment**
