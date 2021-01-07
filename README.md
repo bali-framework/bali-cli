@@ -18,12 +18,12 @@ Update service
 **Developer Environment**
 
 ```bash
-make env
+make init
 ``` 
 
 ```examples
 # setup examples environments
-cd examples && git clone https://github.com/JoshYuJump/bali-cli-example-proto proto
+cd examples && git clone https://github.com/JoshYuJump/bali-cli-example-proto
 ```
 
 
@@ -40,3 +40,8 @@ push tags to remote:
 ```bash
 git push --tags
 ```
+
+**Get a test report**
+```bash
+make test
+``` 
