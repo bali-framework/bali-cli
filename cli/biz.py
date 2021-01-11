@@ -63,7 +63,7 @@ def create_config_file(config_path: Path):
     template = jinja2_env.get_template("config.jinja2")
     content = template.render()
     with config_path.open(mode="w") as f:
-        f.write(content)
+        f.write(content + os.linesep)
 
 
 def create_init_file(init_path: Path):
