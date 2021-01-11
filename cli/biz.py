@@ -1,5 +1,5 @@
+import os
 import re
-from os import system, makedirs, walk
 from pathlib import Path
 from shutil import copyfile
 
@@ -26,13 +26,13 @@ def prepare_source_repo(work_dir: Path, repo_name: str) -> Path:
 
 def prepare_current_repo(work_dir: Path) -> Path:
     dst_dir = work_dir / "clients" / "intermediates"
-    makedirs(dst_dir, exist_ok=True)
+    os.makedirs(dst_dir, exist_ok=True)
     return dst_dir
 
 
 def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
     options = [f"-I{output_dir}", f"--python_out={output_dir}", f"--grpc_python_out={output_dir}"]
-    system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_file_name}")
+    os.system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_file_name}")
 
 
 def compile_client_file(proto_path: Path, service_name: str):
@@ -68,7 +68,7 @@ def create_config_file(config_path: Path):
 
 def create_init_file(init_path: Path):
     services = set()
-    for _1, _2, filenames in walk(init_path.parent / "intermediates"):
+    for _1, _2, filenames in os.walk(init_path.parent / "intermediates"):
         services |= {i.split("_")[0] for i in filenames if i.endswith("_client.py")}
 
     template = jinja2_env.get_template("clients.init.jinja2")
@@ -94,6 +94,6 @@ def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
 
     compile_proto_file(dst_dir, proto_file_name)
     compile_client_file(dst_proto_path, service)
-    system(f"pb2py {dst_dir / f'{service}_pb2.py'} > {dst_dir / f'{service}_schema.py'}")
+    os.system(f"pb2py {dst_dir / f'{service}_pb2.py'} > {dst_dir / f'{service}_schema.py'}")
     create_init_file(dst_dir.parent / "__init__.py")
     create_config_file(dst_dir.parent / "config.py")
