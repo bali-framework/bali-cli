@@ -96,4 +96,6 @@ def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
     compile_client_file(dst_proto_path, service)
     os.system(f"pb2py {dst_dir / f'{service}_pb2.py'} > {dst_dir / f'{service}_schema.py'}")
     create_init_file(dst_dir.parent / "__init__.py")
-    create_config_file(dst_dir.parent / "config.py")
+    create_config_file(dst_dir.parent / "_config.py")
+
+    typer.echo()

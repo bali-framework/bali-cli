@@ -4,9 +4,10 @@ from typing import Dict
 from grpc import insecure_channel
 from google.protobuf.json_format import MessageToDict
 from . import {{ filename }}_pb2, {{ filename }}_pb2_grpc, {{ filename }}_schema
-from .. import GRPC_ADDRESS, GRPC_LOGGER
+from .._config import GRPC_ADDRESS, GRPC_LOGGER
 
 __all__ = ["{{ service }}Client"]
+
 logger = logging.getLogger(GRPC_LOGGER)
 
 
@@ -26,7 +27,7 @@ class {{ service }}Client:
             request = {{ filename }}_pb2.{{ method[1] }}(**payload)
             response = stub.{{ method[0] }}(request)
     {% endif %}
-            rely = MessageToDict(response, True, True)
-            logger.info("gRPC client of %s.%s received: %s", service_name, rpc_name, rely)
-            return {{ filename }}_schema.{{ method[2] }}(**rely)
+            reply = MessageToDict(response, True, True)
+            logger.info("gRPC client of %s.%s received: %s", service_name, rpc_name, reply)
+            return {{ filename }}_schema.{{ method[2] }}(**reply)
 {% endfor %}

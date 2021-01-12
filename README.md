@@ -6,11 +6,11 @@ CLI tools to simplify gRPC services and clients
 
 **bali add {service}**
 
-Add service to clients folder 
+> Add service to clients folder 
 
 **bali update {service}**
 
-Update service 
+> Update service 
 
 
 ### CONTRIBUTE
