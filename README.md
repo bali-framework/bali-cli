@@ -23,7 +23,10 @@ make init
 
 ```examples
 # setup examples environments
-cd examples && git clone https://github.com/JoshYuJump/bali-cli-example-proto
+cd examples && git clone https://github.com/JoshYuJump/bali-cli-example-proto proto
+
+# execute bali commands 
+# cd examples/gateway_service && bali add greeter
 ```
 
 
