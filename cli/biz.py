@@ -1,5 +1,5 @@
+import os
 import re
-from os import system, makedirs
 from pathlib import Path
 from shutil import copyfile
 
@@ -7,6 +7,12 @@ import typer
 import decamelize
 from git import Repo
 from jinja2 import PackageLoader, Environment, select_autoescape
+
+jinja2_env = Environment(
+    loader=PackageLoader("cli"),
+    autoescape=select_autoescape(["jinja2"]),
+)
+jinja2_env.filters["decamelize"] = decamelize.convert
 
 
 def prepare_source_repo(work_dir: Path, repo_name: str) -> Path:
@@ -20,13 +26,13 @@ def prepare_source_repo(work_dir: Path, repo_name: str) -> Path:
 
 def prepare_current_repo(work_dir: Path) -> Path:
     dst_dir = work_dir / "clients" / "intermediates"
-    makedirs(dst_dir, exist_ok=True)
+    os.makedirs(dst_dir, exist_ok=True)
     return dst_dir
 
 
 def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
     options = [f"-I{output_dir}", f"--python_out={output_dir}", f"--grpc_python_out={output_dir}"]
-    system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_file_name}")
+    os.system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_file_name}")
 
 
 def compile_client_file(proto_path: Path, service_name: str):
@@ -44,16 +50,30 @@ def compile_client_file(proto_path: Path, service_name: str):
             if _rpc:
                 methods.append([i.strip() for i in _rpc.groups()])
 
-    env = Environment(
-        loader=PackageLoader("cli"),
-        autoescape=select_autoescape(["jinja2"]),
-    )
-    env.filters["decamelize"] = decamelize.convert
-    template = env.get_template("client.jinja2")
-    content = template.render(
-        service=service, methods=methods, filename=proto_path.name.split(".")[0]
-    )
+    template = jinja2_env.get_template("client.jinja2")
+    content = template.render(service=service, methods=methods, filename=proto_path.stem)
     with (proto_path.parent / f"{service_name}_client.py").open(mode="w") as f:
+        f.write(content)
+
+
+def create_config_file(config_path: Path):
+    if config_path.exists():
+        return
+
+    template = jinja2_env.get_template("config.jinja2")
+    content = template.render()
+    with config_path.open(mode="w") as f:
+        f.write(content + os.linesep)
+
+
+def create_init_file(init_path: Path):
+    services = set()
+    for _1, _2, filenames in os.walk(init_path.parent / "intermediates"):
+        services |= {i.split("_")[0] for i in filenames if i.endswith("_client.py")}
+
+    template = jinja2_env.get_template("clients.init.jinja2")
+    content = template.render(services=services)
+    with init_path.open(mode="w") as f:
         f.write(content)
 
 
@@ -74,5 +94,6 @@ def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
 
     compile_proto_file(dst_dir, proto_file_name)
     compile_client_file(dst_proto_path, service)
-    system(f"pb2py {dst_dir / f'{service}_pb2.py'} > {dst_dir / f'{service}_schema.py'}")
-    (dst_dir / "__init__.py").touch(exist_ok=True)
+    os.system(f"pb2py {dst_dir / f'{service}_pb2.py'} > {dst_dir / f'{service}_schema.py'}")
+    create_init_file(dst_dir.parent / "__init__.py")
+    create_config_file(dst_dir.parent / "config.py")
