@@ -23,7 +23,7 @@ class {{ service }}Client:
             response = stub.{{ method[0] }}()
     {% else %}
             payload = schema.dict()
-            logger.info("{gRPC client of %s.%s send: %s", service_name, rpc_name, payload)
+            logger.info("gRPC client of %s.%s send: %s", service_name, rpc_name, payload)
             request = {{ filename }}_pb2.{{ method[1] }}(**payload)
             response = stub.{{ method[0] }}(request)
     {% endif %}
