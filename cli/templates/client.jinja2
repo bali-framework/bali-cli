@@ -11,8 +11,9 @@ __all__ = ["{{ service }}Client"]
 logger = logging.getLogger(GRPC_LOGGER)
 
 
-class {{ service }}Client:
+class {{ service | replace("Service", "") }}Client:
     URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
+    s = schemas = {{ filename }}_schema
 {% for method in methods %}
     def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}) -> {{ filename }}_schema.{{ method[2] }}:
         with insecure_channel(self.URL) as channel:
