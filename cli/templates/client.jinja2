@@ -11,7 +11,7 @@ __all__ = ["{{ service }}Client"]
 logger = logging.getLogger(GRPC_LOGGER)
 
 
-class {{ service }}Client:
+class {{ service | replace("Service", "") }}Client:
     URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
     s = schemas = {{ filename }}_schema
 {% for method in methods %}
