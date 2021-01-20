@@ -7,7 +7,7 @@ from google.protobuf.struct_pb2 import Struct
 from . import {{ filename }}_pb2, {{ filename }}_pb2_grpc, {{ filename }}_schema
 from .._config import GRPC_ADDRESS, GRPC_LOGGER
 
-__all__ = ["{{ service }}Client"]
+__all__ = ["{{ service | replace("Service", "") }}Client"]
 
 logger = logging.getLogger(GRPC_LOGGER)
 
