@@ -24,6 +24,7 @@ def prepare_source_repo(work_dir: Path, repo_name: str) -> Path:
     return source_repo_dir
 
 
+# noinspection PyTypeChecker
 def prepare_current_repo(work_dir: Path) -> Path:
     dst_dir = work_dir / "clients" / "intermediates"
     os.makedirs(dst_dir, exist_ok=True)
@@ -66,6 +67,7 @@ def create_config_file(config_path: Path):
         f.write(content + os.linesep)
 
 
+# noinspection PyTypeChecker
 def create_init_file(init_path: Path):
     services = set()
     for _1, _2, filenames in os.walk(init_path.parent / "intermediates"):
@@ -77,6 +79,7 @@ def create_init_file(init_path: Path):
         f.write(content)
 
 
+# noinspection PyTypeChecker
 def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
     work_dir = Path.cwd()
     typer.echo(f'> Current work directory is {work_dir}')

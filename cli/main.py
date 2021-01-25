@@ -12,11 +12,3 @@ def add(service: str):
     typer.echo(f'{os.linesep} 🚀 Start adding {service} ...')
     biz.get_newest_proto_file_to_current_repo("proto", service)
     typer.echo(f'{os.linesep} ✅ Service added successfully !')
-
-
-@app.command()
-def update(service: str):
-    """update input_service_name's proto_file to current_dir/service_name"""
-    typer.echo(f'{os.linesep} 🚀 Start updating {service} ...')
-    biz.get_newest_proto_file_to_current_repo("proto", service)
-    typer.echo(f'{os.linesep} ✅ Service updated successfully !')

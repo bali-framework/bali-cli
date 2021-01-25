@@ -4,6 +4,8 @@
 # includes Added / Changed / Fixed
 
 ## [0.2.0] UNRELEASED
+### Changed
+- Removed `bali update` command
 
 ## [0.1.5] 2021-01-22
 ### Fixed
