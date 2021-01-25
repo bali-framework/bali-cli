@@ -2,7 +2,7 @@ import logging
 from typing import Dict
 
 from grpc import insecure_channel
-from google.protobuf.json_format import MessageToDict
+from google.protobuf import json_format
 from google.protobuf.struct_pb2 import Struct
 from . import {{ filename }}_pb2, {{ filename }}_pb2_grpc, {{ filename }}_schema
 from .._config import GRPC_ADDRESS, GRPC_LOGGER
@@ -16,7 +16,7 @@ class {{ service | replace("Service", "") }}Client:
     URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
     s = schemas = {{ filename }}_schema
 {% for method in methods %}
-    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% elif "google.protobuf." in method[1] %}, schema: {{ method[1] | replace("google.protobuf.", "") }}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}) -> {{ filename }}_schema.{{ method[2] }}:
+    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}) -> {{ filename }}_schema.{{ method[2] }}:
         with insecure_channel(self.URL) as channel:
             stub = {{ filename }}_pb2_grpc.{{ service }}Stub(channel)
             service_name, rpc_name = "{{ service }}", "{{ method[0] }}"
@@ -26,10 +26,10 @@ class {{ service | replace("Service", "") }}Client:
     {% else %}
             payload = schema.dict()
             logger.info("gRPC client of %s.%s send: %s", service_name, rpc_name, payload)
-            request = {{ filename }}_pb2.{{ method[1] }}(**payload)
+            request = json_format.ParseDict(payload, {{ filename }}_pb2.{{ method[1] }}())
             response = stub.{{ method[0] }}(request)
     {% endif %}
-            reply = MessageToDict(response, True, True)
+            reply = json_format.MessageToDict(response, True, True)
             logger.info("gRPC client of %s.%s received: %s", service_name, rpc_name, reply)
             return {{ filename }}_schema.{{ method[2] }}(**reply)
 {% endfor %}
