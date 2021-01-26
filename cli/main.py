@@ -12,8 +12,10 @@ def placeholder():
 
 
 @app.command()
-def add(service: str):
+def add(service: str, target_dir: str = ''):
     """add input_service_name's proto_file to current_dir/service_name"""
+    proto_repo = 'proto'
+
     typer.echo(f'{os.linesep} 🚀 Start adding {service} ...')
-    biz.get_newest_proto_file_to_current_repo("proto", service)
+    biz.add_service(proto_repo, service, target_dir=target_dir)
     typer.echo(f'{os.linesep} ✅ Service added successfully !')

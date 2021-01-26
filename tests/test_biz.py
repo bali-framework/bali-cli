@@ -111,7 +111,7 @@ class TestGetNewestProtoFileToCurrentRepo:
         rmtree(self.dst_dir.parent, ignore_errors=True)
 
     def test_proto_file_equal(self):
-        biz.get_newest_proto_file_to_current_repo(self.test_repo_name, self.service)
+        biz.add_service(self.test_repo_name, self.service)
 
         assert cmpfiles(self.source_repo_dir, self.dst_dir, f"{self.service}.proto")
         assert (self.dst_dir / f"{self.service}_pb2.py").exists()

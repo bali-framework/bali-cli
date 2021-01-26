@@ -80,12 +80,19 @@ def create_init_file(init_path: Path):
 
 
 # noinspection PyTypeChecker
-def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
+def add_service(repo_name: str, service: str, target_dir: str) -> None:
     work_dir = Path.cwd()
-    typer.echo(f'> Current work directory is {work_dir}')
+    typer.echo(f'> Current work directory is `{work_dir}`')
+    typer.echo(f'> Target client path is `{target_dir or "."}`')
 
     source_repo_dir = prepare_source_repo(work_dir, repo_name)
-    dst_dir = prepare_current_repo(work_dir)
+
+    # target dir
+    client_dir = work_dir
+    if target_dir:
+        client_dir = client_dir / target_dir
+
+    dst_dir = prepare_current_repo(client_dir)
 
     # copy proto files
     proto_file_name = f"{service}.proto"
