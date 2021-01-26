@@ -87,7 +87,7 @@ def get_newest_proto_file_to_current_repo(repo_name: str, service: str) -> None:
     source_repo_dir = prepare_source_repo(work_dir, repo_name)
     dst_dir = prepare_current_repo(work_dir)
 
-    # 拷贝 proto 文件
+    # copy proto files
     proto_file_name = f"{service}.proto"
     dst_proto_path = dst_dir / proto_file_name
     copyfile(
