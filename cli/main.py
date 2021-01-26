@@ -7,6 +7,11 @@ app = typer.Typer()
 
 
 @app.command()
+def placeholder():
+    pass
+
+
+@app.command()
 def add(service: str):
     """add input_service_name's proto_file to current_dir/service_name"""
     typer.echo(f'{os.linesep} 🚀 Start adding {service} ...')
