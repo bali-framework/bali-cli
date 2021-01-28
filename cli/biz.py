@@ -69,7 +69,7 @@ def create_config_file(config_path: Path):
 def create_init_file(init_path: Path):
     services = set()
     for _1, _2, filenames in os.walk(init_path.parent / "intermediates"):
-        services |= {i.split("_")[0] for i in filenames if i.endswith("_client.py")}
+        services |= {i.rsplit("_", 1)[0] for i in filenames if i.endswith("_client.py")}
 
     template = jinja2_env.get_template("clients.init.jinja2")
     content = template.render(services=services)
