@@ -3,6 +3,13 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
+## [0.3.0] UNRELEASED
+
+## [0.2.4] 2021-01-28
+### Fixed
+- Fixed protobuf contains `Empty`
+- Fixed multi world service name
+
 ## [0.2.2] 2021-01-26
 ### Added
 - Added --target_dir option
