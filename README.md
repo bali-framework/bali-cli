@@ -8,9 +8,11 @@ CLI tools to simplify gRPC services and clients
 
 > Add service to clients folder 
 
-**bali update {service}**
+**bali build {service}**
 
-> Update service 
+> Build current development service protobuf 
+>
+> Protobuf Path: /services/rpc/*.proto 
 
 
 ### CONTRIBUTE
