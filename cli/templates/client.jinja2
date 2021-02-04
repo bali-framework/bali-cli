@@ -15,7 +15,7 @@ class {{ service | replace("Service", "") }}Client:
     URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
     s = schemas = {{ filename }}_schema
 {% for method in methods %}
-    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}) -> {{ filename }}_schema.{{ method[2] }}:
+    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}, *, fail_silently=False) -> {{ filename }}_schema.{{ method[2] }}:
         with insecure_channel(self.URL) as channel:
             stub = {{ filename }}_pb2_grpc.{{ service }}Stub(channel)
             service_name, rpc_name = "{{ service }}", "{{ method[0] }}"
@@ -27,8 +27,16 @@ class {{ service | replace("Service", "") }}Client:
             logger.info("gRPC client of %s.%s send: %s", service_name, rpc_name, payload)
             request = json_format.ParseDict(payload, {{ filename }}_pb2.{{ method[1] }}())
     {% endif %}
-            response = stub.{{ method[0] }}(request)
-            reply = json_format.MessageToDict(response, True, True)
+            try:
+                response = stub.{{ method[0] }}(request)
+            except Exception as e:
+                if not fail_silently:
+                    raise
+                logger.warning(repr(e))
+                reply = {}
+            else:
+                reply = json_format.MessageToDict(response, True, True)
+
             logger.info("gRPC client of %s.%s received: %s", service_name, rpc_name, reply)
             return {{ filename }}_schema.{{ method[2] }}(**reply)
 {% endfor %}

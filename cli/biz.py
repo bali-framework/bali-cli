@@ -60,6 +60,7 @@ def create_config_file(config_path: Path):
     if config_path.exists():
         return
 
+    typer.echo(f"{os.linesep} !!!!! The generated file needs to be rewritten: {config_path} !!!!!")
     template = jinja2_env.get_template("config.jinja2")
     content = template.render()
     with config_path.open(mode="w") as f:
