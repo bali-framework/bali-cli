@@ -110,3 +110,17 @@ def add_service(repo_name: str, service: str, target_dir: str) -> None:
     create_config_file(dst_dir.parent / "_config.py")
 
     typer.echo()
+
+
+def build_service() -> None:
+    current_dir = Path.cwd()
+    work_dir = current_dir / "services" / "rpc"
+    base_command = "python3 -m grpc_tools.protoc -I{dir} --python_out={dir} --grpc_python_out={dir} {file}"
+
+    for _1, _2, filenames in os.walk(work_dir):
+        for i in filenames:
+            file = work_dir / i
+            if file.suffix == ".proto":
+                command = base_command.format(dir=work_dir, file=i)
+                typer.echo(command)
+                os.system(command)
