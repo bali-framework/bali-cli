@@ -70,6 +70,24 @@ def create_config_file(config_path: Path):
 
 # noinspection PyTypeChecker
 def create_init_file(init_path: Path):
+
+    # get custom imports
+    custom_imports = []
+    try:
+        with init_path.open(mode="r") as f:
+            while True:
+                # Read next line
+                line = f.readline()
+                # If line is blank, then you struck the EOF
+                if not line:
+                    break
+
+                if 'intermediates' not in line and not line.startswith('#'):
+                    if line.strip():
+                        custom_imports.append(line.strip() + os.linesep)
+    except FileNotFoundError:
+        pass
+
     services = set()
     for _1, _2, filenames in os.walk(init_path.parent / "intermediates"):
         services |= {i.rsplit("_", 1)[0] for i in filenames if i.endswith("_client.py")}
@@ -77,7 +95,11 @@ def create_init_file(init_path: Path):
     template = jinja2_env.get_template("clients.init.jinja2")
     content = template.render(services=services)
     with init_path.open(mode="w") as f:
-        f.write(content)
+        f.write(content + os.linesep)
+
+        f.write('# Custom imports' + os.linesep)
+        for custom_import in custom_imports:
+            f.write(custom_import)
 
 
 # noinspection PyTypeChecker
