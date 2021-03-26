@@ -93,7 +93,7 @@ def create_init_file(init_path: Path):
         services |= {i.rsplit("_", 1)[0] for i in filenames if i.endswith("_client.py")}
 
     template = jinja2_env.get_template("clients.init.jinja2")
-    content = template.render(services=services)
+    content = template.render(services=sorted(list(services)))
     with init_path.open(mode="w") as f:
         f.write(content + os.linesep)
 
