@@ -2,9 +2,15 @@ import logging
 
 from grpc import insecure_channel
 from google.protobuf.empty_pb2 import Empty
+
 from . import {{ filename }}_pb2, {{ filename }}_pb2_grpc, {{ filename }}_schema
 from .._config import GRPC_ADDRESS, GRPC_LOGGER
 from .._utils import MessageToDict, ParseDict
+
+try:
+    from .._config import GRPC_CHANNEL_OPTIONS
+except ImportError:
+    GRPC_CHANNEL_OPTIONS = None
 
 __all__ = ["{{ service | replace("Service", "") }}Client"]
 
@@ -16,7 +22,7 @@ class {{ service | replace("Service", "") }}Client:
     s = schemas = {{ filename }}_schema
 {% for method in methods %}
     def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}, *, fail_silently=False) -> {{ filename }}_schema.{{ method[2] }}:
-        with insecure_channel(self.URL) as channel:
+        with insecure_channel(self.URL, options=GRPC_CHANNEL_OPTIONS) as channel:
             stub = {{ filename }}_pb2_grpc.{{ service }}Stub(channel)
             service_name, rpc_name = "{{ service }}", "{{ method[0] }}"
     {% if method[1] == "google.protobuf.Empty" %}
