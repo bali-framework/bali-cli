@@ -2,9 +2,15 @@ import logging
 
 from grpc import insecure_channel
 from google.protobuf.empty_pb2 import Empty
+
 from . import {{ filename }}_pb2, {{ filename }}_pb2_grpc, {{ filename }}_schema
-from .._config import GRPC_ADDRESS, GRPC_LOGGER, CHANNEL_OPTIONS
+from .._config import GRPC_ADDRESS, GRPC_LOGGER
 from .._utils import MessageToDict, ParseDict
+
+try:
+    from .._config import CHANNEL_OPTIONS
+except ImportError:
+    CHANNEL_OPTIONS = None
 
 __all__ = ["{{ service | replace("Service", "") }}Client"]
 
