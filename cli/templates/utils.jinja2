@@ -1,3 +1,4 @@
+import hashlib
 from datetime import datetime, date
 
 from google.protobuf import json_format
@@ -98,3 +99,18 @@ def ParseDict(  # noqa
     parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
     parser.ConvertMessage(js_dict, message)
     return message
+
+def make_cache_key(service, method, *args, **kwargs):
+    """Make cache key
+
+    ref: https://github.com/peterbe/django-cache-memoize/blob/master/src/cache_memoize/__init__.py
+    cache_memoize._default_make_cache_key
+    """
+    cache_key = ":".join(
+        [quote(str(x)) for x in args]
+        + [quote("{}={}".format(k, v)) for k, v in kwargs.items()]
+    )
+    hashed = hashlib.md5(
+        force_bytes("cache_memoize" + (method + cache_key))
+    ).hexdigest()
+    return 'grpc_cache:%s:%s:%s' % (service, method, hashed)
