@@ -1,5 +1,6 @@
 import hashlib
 from datetime import datetime, date
+from urllib.parse import quote
 
 from google.protobuf import json_format
 
@@ -111,6 +112,6 @@ def make_cache_key(service, method, *args, **kwargs):
         + [quote("{}={}".format(k, v)) for k, v in kwargs.items()]
     )
     hashed = hashlib.md5(
-        force_bytes("cache_memoize" + (method + cache_key))
+        bytes("cache_memoize" + (method + cache_key), encoding='utf-8')
     ).hexdigest()
     return 'grpc_cache:%s:%s:%s' % (service, method, hashed)

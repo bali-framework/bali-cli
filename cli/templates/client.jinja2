@@ -30,7 +30,7 @@ class {{ service | replace("Service", "") }}Client:
              cache_key = make_cache_key(service_name, rpc_name, {% if method[1] != "google.protobuf.Empty" %}schema{% endif %})
              cached = GRPC_CACHE.get(cache_key)
              if cached is not None:
-                 logger.info("gRPC client of %s.%s received(hit cache): %s", service_name, rpc_name, reply)
+                 logger.info("gRPC client of %s.%s received(hit cache): %s", service_name, rpc_name, cached)
                  return cached
 
         with insecure_channel(self.URL, options=GRPC_CHANNEL_OPTIONS) as channel:
@@ -59,7 +59,7 @@ class {{ service | replace("Service", "") }}Client:
             result = {{ filename }}_schema.{{ method[2] }}(**reply)
             # write cache
             if GRPC_CACHE and cache_timeout:
-                cache.set(cache_key, result, timeout=cache_timeout)
+                GRPC_CACHE.set(cache_key, result, timeout=cache_timeout)
 
             return {{ filename }}_schema.{{ method[2] }}(**reply)
 
