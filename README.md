@@ -19,7 +19,7 @@ CLI tools to simplify gRPC services and clients
 [![bali](https://github-readme-stats.vercel.app/api/pin/?username=JoshYuJump&repo=bali)](https://github.com/JoshYuJump/bali)
 
 
-### CONTRIBUTE
+## CONTRIBUTE
 
 **Developer Environment**
 
