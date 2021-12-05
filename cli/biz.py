@@ -42,7 +42,7 @@ def compile_client_file(proto_path: Path, service_name: str):
 
     # 按照项目约定，一个 proto 文件中只有一个 service
     service, methods = None, []
-    with proto_path.open() as f:
+    with proto_path.open(encoding='utf-8') as f:
         for i in f.readlines():
             _service = service_pattern.match(i)
             _rpc = rpc_pattern.match(i)
