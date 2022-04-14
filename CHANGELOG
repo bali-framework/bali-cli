@@ -3,7 +3,11 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [0.5.0] UNRELEASED
+## [1.2.0] UNRELEASED
+
+## [1.1.2] 2021-04-14
+### Fixed
+- Fixed MarkupSafe import issue by locked its version
 
 ## [0.4.0] 2021-03-26
 ### Changed
