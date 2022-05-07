@@ -8,7 +8,7 @@ setup(
     name='bali-cli',
     version=cli.__version__,
     description='Simplify gRPC services and clients',
-    url='https://github.com/JoshYuJump/bali-cli',
+    url='https://github.com/bali-framework/bali-cli',
     author='Josh.Yu',
     author_email='josh.yu_8@live.com',
     license='MIT',
