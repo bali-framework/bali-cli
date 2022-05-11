@@ -21,7 +21,7 @@ class {{ service | replace("Service", "") }}Client:
     URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
     s = schemas = {{ filename }}_schema
 {% for method in methods %}
-    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}, *, fail_silently=False, cache_timeout=0, refresh=True) -> {{ filename }}_schema.{{ method[2] }}:
+    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}, *, fail_silently=False, cache_timeout=0, refresh=False) -> {{ filename }}_schema.{{ method[2] }}:
 
         service_name, rpc_name = "{{ service }}", "{{ method[0] }}"
         if GRPC_CACHE:
