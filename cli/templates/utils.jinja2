@@ -13,11 +13,11 @@ from google.protobuf import json_format
 
 # All RPC clients inherited from the `ClientMixin`
 class ClientMixin():
-    def check_cache(self, service, rpc_name, options, *args, **kwargs)
+    def check_cache(self, service, rpc_name, options, *args, **kwargs):
         cache_timeout = options.get('cache_timeout')
         refresh = options.get('refresh')
         if not self.cache:
-            return None
+            return None, None
 
         cache_key = make_cache_key(service, rpc_name, *args, **kwargs)
         if refresh:
@@ -28,23 +28,25 @@ class ClientMixin():
              cached = self.cache.get(cache_key)
              if cached is not None:
                  self.logger.info("gRPC client of %s.%s received(hit cache): %s", service, rpc_name, cached)
-                 return cached
+                 return cached, cache_key
 
-    def set_cache(self, result, cache_timeout):
+        return None, None
+
+    def set_cache(self, cache_key, result, cache_timeout):
         if self.cache and cache_timeout:
               self.cache.set(cache_key, result, timeout=cache_timeout)
 
-    def rpc_request(self, stub_cls, service, rpc_name, request, fail_silently)
+    def rpc_request(self, service, rpc_name, request, fail_silently):
         with insecure_channel(self.URL, options=self.CHANNEL_OPTIONS) as channel:
-            stub = stub_cls(channel)
+            stub = self.stub_cls(channel)
             try:
                 self.logger.info("gRPC client of %s.%s send: %s. <%s>", service, rpc_name, request, type(request))
                 response = getattr(stub, rpc_name)(request)
             except Exception as ex:
-                logger.error("gRPC client of %s.%s exception: %s", service, rpc_name, ex)
+                self.logger.error("gRPC client of %s.%s exception: %s", service, rpc_name, ex)
                 if not fail_silently:
                     raise
-                self.logger.warning(repr(e))
+                self.logger.warning(repr(ex))
                 reply = {}
             else:
                 reply = MessageToDict(

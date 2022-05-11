@@ -25,29 +25,26 @@ logger = logging.getLogger(GRPC_LOGGER)
 class {{ service_cls }}(ClientMixin):
     URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
     CHANNEL_OPTIONS = GRPC_CHANNEL_OPTIONS
+    stub_cls = pb2_grpc.{{ service }}Stub
     logger = logger
     cache = GRPC_CACHE
 
     s = schemas
     schemas = schemas
-
 {% for method in methods %}
     def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: schemas.{{ method[1] }}{% endif %}, *, fail_silently=False, cache_timeout=0, refresh=False) -> schemas.{{ method[2] }}:
-        service_name, rpc_name = "{{ service }}", "{{ method[0] }}"
+        service, rpc_name = "{{ service }}", "{{ method[0] }}"
         cache_options = {'cache_timeout': cache_timeout, 'refresh': refresh}
-        cached = self.check_cache(service_name, rpc_name, cache_options, {% if method[1] != "google.protobuf.Empty" %}schema{% endif %})
+        cached, cache_key = self.check_cache(service, rpc_name, cache_options, {% if method[1] != "google.protobuf.Empty" %}schema{% endif %})
         if cached is not None:
              return cached
-
-        stub_cls = pb2_grpc.{{ service }}Stub
     {% if method[1] == "google.protobuf.Empty" %}
         request = Empty()
     {% else %}
         request = ParseDict(schema.dict(), pb2.{{ method[1] }}())
     {% endif %}
-        reply = self.rpc_request(stub_cls, service, rpc_name, request, fail_silently)
+        reply = self.rpc_request(service, rpc_name, request, fail_silently)
         result = schemas.{{ method[2] }}(**reply)
-        self.set_cache(result, cache_timeout)
+        self.set_cache(cache_key, result, cache_timeout)
         return result
-
 {% endfor %}
