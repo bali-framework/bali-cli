@@ -21,17 +21,20 @@ class {{ service | replace("Service", "") }}Client:
     URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
     s = schemas = {{ filename }}_schema
 {% for method in methods %}
-    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}, *, fail_silently=False, cache_timeout=0) -> {{ filename }}_schema.{{ method[2] }}:
+    def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: {{ filename }}_schema.{{ method[1] }}{% endif %}, *, fail_silently=False, cache_timeout=0, refresh=False) -> {{ filename }}_schema.{{ method[2] }}:
 
         service_name, rpc_name = "{{ service }}", "{{ method[0] }}"
-
-        # check cache
-        if GRPC_CACHE and cache_timeout:
-             cache_key = make_cache_key(service_name, rpc_name, {% if method[1] != "google.protobuf.Empty" %}schema{% endif %})
-             cached = GRPC_CACHE.get(cache_key)
-             if cached is not None:
-                 logger.info("gRPC client of %s.%s received(hit cache): %s", service_name, rpc_name, cached)
-                 return cached
+        if GRPC_CACHE:
+            cache_key = make_cache_key(service_name, rpc_name, {% if method[1] != "google.protobuf.Empty" %}schema{% endif %})
+            if refresh:
+                GRPC_CACHE.delete(cache_key)
+                logger.info("gRPC client of %s.%s cache cleared: %s", service_name, rpc_name, cache_key)
+            # check cache
+            if cache_timeout:
+                 cached = GRPC_CACHE.get(cache_key)
+                 if cached is not None:
+                     logger.info("gRPC client of %s.%s received(hit cache): %s", service_name, rpc_name, cached)
+                     return cached
 
         with insecure_channel(self.URL, options=GRPC_CHANNEL_OPTIONS) as channel:
             stub = {{ filename }}_pb2_grpc.{{ service }}Stub(channel)
