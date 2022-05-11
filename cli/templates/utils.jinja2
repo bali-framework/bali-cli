@@ -19,15 +19,15 @@ class ClientMixin():
         if not self.cache:
             return None
 
-        cache_key = make_cache_key(service_name, rpc_name, *args, **kwargs)
+        cache_key = make_cache_key(service, rpc_name, *args, **kwargs)
         if refresh:
             self.cache.delete(cache_key)
-            self.logger.info("gRPC client of %s.%s cache cleared: %s", service_name, rpc_name, cache_key)
+            self.logger.info("gRPC client of %s.%s cache cleared: %s", service, rpc_name, cache_key)
         # check cache
         if cache_timeout:
              cached = self.cache.get(cache_key)
              if cached is not None:
-                 self.logger.info("gRPC client of %s.%s received(hit cache): %s", service_name, rpc_name, cached)
+                 self.logger.info("gRPC client of %s.%s received(hit cache): %s", service, rpc_name, cached)
                  return cached
 
     def set_cache(self, result, cache_timeout):
@@ -38,10 +38,10 @@ class ClientMixin():
         with insecure_channel(self.URL, options=self.CHANNEL_OPTIONS) as channel:
             stub = stub_cls(channel)
             try:
-                self.logger.info("gRPC client of %s.%s send: %s. <%s>", service_name, rpc_name, request, type(request))
+                self.logger.info("gRPC client of %s.%s send: %s. <%s>", service, rpc_name, request, type(request))
                 response = getattr(stub, rpc_name)(request)
             except Exception as ex:
-                logger.error("gRPC client of %s.%s exception: %s", service_name, rpc_name, ex)
+                logger.error("gRPC client of %s.%s exception: %s", service, rpc_name, ex)
                 if not fail_silently:
                     raise
                 self.logger.warning(repr(e))
@@ -53,7 +53,7 @@ class ClientMixin():
                     preserving_proto_field_name=True,
                 )
 
-            self.logger.info("gRPC client of %s.%s received: %s", service_name, rpc_name, reply)
+            self.logger.info("gRPC client of %s.%s received: %s", service, rpc_name, reply)
             return reply
 
 
