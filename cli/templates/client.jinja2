@@ -16,7 +16,7 @@ logger = logging.getLogger(GRPC_LOGGER)
 
 
 class {{ service_cls }}(ClientMixin):
-    _service_abbr = {{ service_abbr }}
+    _service_abbr = '{{ service_abbr }}'
     pb2 = pb2
     pb2_grpc = pb2_grpc
 
