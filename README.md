@@ -1,4 +1,16 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/bali-framework/bali/master/docs/img/bali.png" alt='bali framework' />
+</p>
+
+<p align="center">
+    <b>bali-cli</b> is 
+    CLI tools to simplify gRPC services and clients
+</p>
+
 # bali-cli
+
+<img src="https://img.shields.io/pypi/v/bali-cli" />
+
 CLI tools to simplify gRPC services and clients
 
 
@@ -16,7 +28,7 @@ CLI tools to simplify gRPC services and clients
 
 ## Related Projects
 
-[![bali](https://github-readme-stats.vercel.app/api/pin/?username=JoshYuJump&repo=bali)](https://github.com/JoshYuJump/bali)
+[![bali](https://github-readme-stats.vercel.app/api/pin/?username=bali-framework&repo=bali)](https://github.com/bali-framework/bali)
 
 
 ## CONTRIBUTE

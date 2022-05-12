@@ -52,7 +52,18 @@ def compile_client_file(proto_path: Path, service_name: str):
                 methods.append([i.strip() for i in _rpc.groups()])
 
     template = jinja2_env.get_template("client.jinja2")
-    content = template.render(service=service, methods=methods, filename=proto_path.stem)
+
+    # service is like `UserService`
+    # service abbreviation is like `User`
+    service_abbr = service.replace('Service', '')
+
+    content = template.render(
+        service=service,
+        service_abbr=service_abbr,
+        service_cls=f'{service_abbr}Client',
+        methods=methods,
+        filename=proto_path.stem,
+    )
     with (proto_path.parent / f"{service_name}_client.py").open(mode="w") as f:
         f.write(content)
 
