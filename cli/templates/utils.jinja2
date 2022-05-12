@@ -9,12 +9,13 @@ from urllib.parse import quote
 
 from grpc import insecure_channel
 from google.protobuf import json_format
+from google.protobuf.empty_pb2 import Empty
 
 
 # All RPC clients inherited from the `ClientMixin`
-class ClientMixin():
+class ClientMixin:
     def check_cache(self, service, rpc_name, options, *args, **kwargs):
-        cache_timeout = options.get('cache_timeout')
+        cache_timeout = options.get('timeout')
         refresh = options.get('refresh')
         if not self.cache:
             return None, None
@@ -25,23 +26,44 @@ class ClientMixin():
             self.logger.info("gRPC client of %s.%s cache cleared: %s", service, rpc_name, cache_key)
         # check cache
         if cache_timeout:
-             cached = self.cache.get(cache_key)
-             if cached is not None:
-                 self.logger.info("gRPC client of %s.%s received(hit cache): %s", service, rpc_name, cached)
-                 return cached, cache_key
+            cached = self.cache.get(cache_key)
+            if cached is not None:
+                self.logger.info("gRPC client of %s.%s received(hit cache): %s", service, rpc_name, cached)
+                return cached, cache_key
 
         return None, None
 
     def set_cache(self, cache_key, result, cache_timeout):
         if self.cache and cache_timeout:
-              self.cache.set(cache_key, result, timeout=cache_timeout)
+            self.cache.set(cache_key, result, timeout=cache_timeout)
 
-    def rpc_request(self, service, rpc_name, request, fail_silently):
+    def request(self, service, rpc_name, request_protobuf, schema, response_schema_cls, fail_silently, cache_options):
+        """rpc request entry
+
+        :param service: Service name like `UserService`
+        :param rpc_name: Service name like `GetUser`
+        :param request_protobuf:
+        :param schema: RPC request schema objects, it's None when message type is Empty
+        :param response_schema_cls:
+        :param fail_silently: failed silently
+        :param cache_options: cache options include `timeout` and `refresh`
+        :return:
+        """
+        if schema:
+            cached, cache_key = self.check_cache(service, rpc_name, cache_options, schema)
+        else:
+            cached, cache_key = self.check_cache(service, rpc_name, cache_options)
+        if cached is not None:
+            return cached
+
+        stub_cls = getattr(self.pb2_grpc, f'{service}Stub')
+        request_data = ParseDict(schema.dict(), getattr(self.pb2, request_protobuf)()) if schema else Empty()
+
         with insecure_channel(self.URL, options=self.CHANNEL_OPTIONS) as channel:
-            stub = self.stub_cls(channel)
+            stub = stub_cls(channel)
             try:
-                self.logger.info("gRPC client of %s.%s send: %s. <%s>", service, rpc_name, request, type(request))
-                response = getattr(stub, rpc_name)(request)
+                self.logger.info("gRPC client of %s.%s send: %s. <%s>", service, rpc_name, request_data, type(request_data))
+                response = getattr(stub, rpc_name)(request_data)
             except Exception as ex:
                 self.logger.error("gRPC client of %s.%s exception: %s", service, rpc_name, ex)
                 if not fail_silently:
@@ -56,7 +78,12 @@ class ClientMixin():
                 )
 
             self.logger.info("gRPC client of %s.%s received: %s", service, rpc_name, reply)
-            return reply
+
+            result = response_schema_cls(**reply)
+
+            cache_timeout = cache_options.get('timeout')
+            self.set_cache(cache_key, result, cache_timeout)
+            return result
 
 
 class ProtobufParser(json_format._Parser):  # noqa
@@ -154,6 +181,7 @@ def ParseDict(  # noqa
     parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
     parser.ConvertMessage(js_dict, message)
     return message
+
 
 def make_cache_key(service, method, *args, **kwargs):
     """Make cache key
