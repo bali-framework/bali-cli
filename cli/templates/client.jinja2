@@ -10,19 +10,13 @@ from . import (
 from .._config import GRPC_ADDRESS, GRPC_LOGGER, GRPC_CACHE
 from .._utils import ClientMixin
 
-try:
-    from .._config import GRPC_CHANNEL_OPTIONS
-except ImportError:
-    GRPC_CHANNEL_OPTIONS = None
-
 __all__ = ["{{ service_cls }}"]
 
 logger = logging.getLogger(GRPC_LOGGER)
 
 
 class {{ service_cls }}(ClientMixin):
-    URL = f"{GRPC_ADDRESS['host']}:{GRPC_ADDRESS['port']}"
-    CHANNEL_OPTIONS = GRPC_CHANNEL_OPTIONS
+    _service_abbr = {{ service_abbr }}
     pb2 = pb2
     pb2_grpc = pb2_grpc
 
