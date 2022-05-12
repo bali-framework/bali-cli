@@ -16,13 +16,13 @@ from ._config import GRPC_ADDRESS
 # `GRPC_ADDRESS` is Generic gRPC channel target
 # `GRPC_ADDRESS_EXTENDS` is gRPC channel target specified by service abbreviation
 try:
-    from .._config import GRPC_ADDRESS_EXTENDS
+    from ._config import GRPC_ADDRESS_EXTENDS
 except ImportError:
     GRPC_ADDRESS_EXTENDS = {}
 
 # gRPC connect channel options
 try:
-    from .._config import GRPC_CHANNEL_OPTIONS as channel_options
+    from ._config import GRPC_CHANNEL_OPTIONS as channel_options
 except ImportError:
     channel_options = None
 
