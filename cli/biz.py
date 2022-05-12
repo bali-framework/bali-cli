@@ -55,12 +55,13 @@ def compile_client_file(proto_path: Path, service_name: str):
 
     # service is like `UserService`
     # service abbreviation is like `User`
-    service_abbr = service.replace('Service', '')
+    service_abbr_camelcase = service.replace('Service', '')
+    service_abbr = decamelize.convert(service_abbr_camelcase)
 
     content = template.render(
         service=service,
         service_abbr=service_abbr,
-        service_cls=f'{service_abbr}Client',
+        service_cls=f'{service_abbr_camelcase}Client',
         methods=methods,
         filename=proto_path.stem,
     )
