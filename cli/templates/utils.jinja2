@@ -22,9 +22,10 @@ except ImportError:
 
 # gRPC connect channel options
 try:
-    from ._config import GRPC_CHANNEL_OPTIONS as channel_options
+    from ._config import GRPC_CHANNEL_OPTIONS as CHANNEL_OPTIONS
 except ImportError:
-    channel_options = None
+    CHANNEL_OPTIONS = None
+
 
 # All RPC clients inherited from the `ClientMixin`
 class ClientMixin:
@@ -80,7 +81,7 @@ class ClientMixin:
         request_data = ParseDict(schema.dict(), getattr(self.pb2, request_protobuf)()) if schema else Empty()
 
         channel_target = self._get_channel_target()
-        with insecure_channel(channel_target, options=channel_options) as channel:
+        with insecure_channel(channel_target, options=CHANNEL_OPTIONS) as channel:
             stub = stub_cls(channel)
             try:
                 self.logger.info("gRPC client of %s.%s send: %s. <%s>", service, rpc_name, request_data, type(request_data))
