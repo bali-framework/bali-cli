@@ -6,5 +6,5 @@ jinja2==2.11.2
 MarkupSafe==2.0.1
 protobuf>=3.15,<3.18
 protobuf2pydantic==2021.1.20
-pydantic==1.7.3
+pydantic~=1.7
 typer>=0.3.2

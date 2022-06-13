@@ -155,14 +155,26 @@ def add_service(repo_name: str, service: str, target_dir: str) -> None:
 
 
 def build_service() -> None:
-    current_dir = Path.cwd()
-    work_dir = current_dir / "services" / "rpc"
-    base_command = "python3 -m grpc_tools.protoc -I{dir} --python_out={dir} --grpc_python_out={dir} {file}"
+    """Build protobuf files to python files
 
-    for _1, _2, filenames in os.walk(work_dir):
-        for i in filenames:
-            file = work_dir / i
-            if file.suffix == ".proto":
-                command = base_command.format(dir=work_dir, file=i)
-                typer.echo(command)
-                os.system(command)
+    Before v2.1.7, build command will find protobuf file in `/services/rpc`
+    from v2.1.7, `/protos` is OK, and prefer.
+    """
+    current_dir = Path.cwd()
+    proto_dirs = [
+        current_dir / "protos",
+        current_dir / "services" / "rpc",
+    ]
+    base_command = (
+        'python3 -m grpc_tools.protoc '
+        ' -I{dir} --python_out={dir} --grpc_python_out={dir} {file}'
+    )
+
+    for proto_dir in proto_dirs:
+        for _1, _2, filenames in os.walk(proto_dir):
+            for i in filenames:
+                file = proto_dir / i
+                if file.suffix == ".proto":
+                    command = base_command.format(dir=proto_dir, file=i)
+                    typer.echo(command)
+                    os.system(command)
