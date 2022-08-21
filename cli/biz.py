@@ -124,8 +124,8 @@ def create_utils_file(utils_path: Path):
 # noinspection PyTypeChecker
 def add_service(repo_name: str, service: str, target_dir: str) -> None:
     work_dir = Path.cwd()
-    typer.echo(f'> Current work directory is `{work_dir}`')
-    typer.echo(f'> Target client path is `{target_dir or "."}`')
+    typer.echo(f' > Current work directory is `{work_dir}`')
+    typer.echo(f' > Target client path is `{target_dir or "."}`')
 
     source_repo_dir = prepare_source_repo(work_dir, repo_name)
 
