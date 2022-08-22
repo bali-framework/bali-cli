@@ -33,3 +33,13 @@ class {{ service_cls }}(ClientMixin):
         cache_options = {'timeout': cache_timeout, 'refresh': refresh}
         return self.request(service, rpc_name, request_protobuf, schema, response_schema_cls, fail_silently, cache_options)
 {% endfor %}
+
+class Async{{ service_cls }}({{ service_cls }}):
+{% for method in methods %}
+    async def {{ method[0] | decamelize }}(self{% if method[1] == "google.protobuf.Empty" %}{% else %}, schema: schemas.{{ method[1] }}{% endif %}, *, fail_silently=False, cache_timeout=0, refresh=False) -> schemas.{{ method[2] }}:
+        service, rpc_name, request_protobuf = "{{ service }}", "{{ method[0] }}", "{{ method[1] }}"
+        response_schema_cls = schemas.{{ method[2] }}
+        schema = {% if method[1] == "google.protobuf.Empty" %}None{% else %}schema{% endif %}
+        cache_options = {'timeout': cache_timeout, 'refresh': refresh}
+        return await self.aio_request(service, rpc_name, request_protobuf, schema, response_schema_cls, fail_silently, cache_options)
+{% endfor %}
