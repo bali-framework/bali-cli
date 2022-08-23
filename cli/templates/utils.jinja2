@@ -127,7 +127,7 @@ class ClientMixin:
                                  getattr(self.pb2, request_protobuf)()) if schema else Empty()
 
         channel_target = self._get_channel_target()
-        with grpc.aio.insecure_channel(channel_target, options=CHANNEL_OPTIONS) as channel:
+        async with grpc.aio.insecure_channel(channel_target, options=CHANNEL_OPTIONS) as channel:
             stub = stub_cls(channel)
             try:
                 self.logger.info("gRPC aio client of %s.%s send: %s. <%s>", service, rpc_name,
@@ -173,6 +173,30 @@ class ProtobufParser(json_format._Parser):  # noqa
             raise json_format.ParseError(
                 'Value {0} has unexpected type {1}.'.format(value, type(value))
             )
+
+
+class ProtobufParser_V320(json_format._Parser):  # noqa
+
+    def _ConvertValueMessage(self, value, message, path):
+        """Convert a JSON representation into Value message."""
+        if isinstance(value, dict):
+            self._ConvertStructMessage(value, message.struct_value, path)
+        elif isinstance(value, list):
+            self._ConvertListValueMessage(value, message.list_value, path)
+        elif isinstance(value, (datetime, date)):
+            message.string_value = value.isoformat()
+        elif value is None:
+            message.null_value = 0
+        elif isinstance(value, bool):
+            message.bool_value = value
+        elif isinstance(value, str):
+            message.string_value = value
+        elif isinstance(value, json_format._INT_OR_FLOAT):
+            message.number_value = value
+        else:
+            raise json_format.ParseError('Value {0} has unexpected type {1} at {2}'.format(
+                value, type(value), path))
+
 
 
 class ProtobufPrinter(json_format._Printer):  # noqa
@@ -241,11 +265,14 @@ def MessageToDict(  # noqa
     return printer._MessageToJsonObject(message)  # noqa
 
 
-def ParseDict(  # noqa
-    js_dict, message, ignore_unknown_fields=False, descriptor_pool=None
-):
-    parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
-    parser.ConvertMessage(js_dict, message)
+def ParseDict(js_dict, message, ignore_unknown_fields=False, descriptor_pool=None):  # noqa
+    if int(protobuf__version__.split('.')[0]) >= 3 and int(protobuf__version__.split('.')[1]) >= 20:
+        parser = ProtobufParser_V320(ignore_unknown_fields, descriptor_pool, max_recursion_depth=MAX_RECURSION_DEPTH)
+        parser.ConvertMessage(js_dict, message, '')
+    else:
+        parser = ProtobufParser(ignore_unknown_fields, descriptor_pool)
+        parser.ConvertMessage(js_dict, message)
+
     return message
 
 

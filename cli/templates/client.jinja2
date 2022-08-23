@@ -10,7 +10,7 @@ from . import (
 from .._config import GRPC_ADDRESS, GRPC_LOGGER, GRPC_CACHE
 from .._utils import ClientMixin
 
-__all__ = ["{{ service_cls }}"]
+__all__ = ["{{ service_cls }}", "Async{{ service_cls }}"]
 
 logger = logging.getLogger(GRPC_LOGGER)
 
@@ -33,6 +33,7 @@ class {{ service_cls }}(ClientMixin):
         cache_options = {'timeout': cache_timeout, 'refresh': refresh}
         return self.request(service, rpc_name, request_protobuf, schema, response_schema_cls, fail_silently, cache_options)
 {% endfor %}
+
 
 class Async{{ service_cls }}({{ service_cls }}):
 {% for method in methods %}
