@@ -10,10 +10,10 @@ from urllib.parse import quote
 
 import grpc
 from grpc import insecure_channel
-from google.protobuf import json_format
+from google.protobuf import json_format, __version__ as protobuf__version__
 from google.protobuf.empty_pb2 import Empty
 
-from ._config import GRPC_ADDRESS
+from ._config import GRPC_ADDRESS, MAX_RECURSION_DEPTH
 
 # `GRPC_ADDRESS` is Generic gRPC channel target
 # `GRPC_ADDRESS_EXTENDS` is gRPC channel target specified by service abbreviation
