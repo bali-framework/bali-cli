@@ -3,7 +3,40 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [1.2.0] UNRELEASED
+## [2.4.0] UNRELEASED
+
+## [2.3.0] 2021-09-14
+### Changed
+- Upgraded grpcio
+- Optimized *_pb2_grpc.py imports, `clients/intermediates` no longer need to join the runtime environment
+
+### Fixed
+- Fixed import MAX_RECURSION_DEPTH and protobuf.__version__
+- Fixed async client feature
+
+## [2.2.0] 2021-08-22
+### Added
+Supported async gRPC client. [#40](https://github.com/bali-framework/bali-cli/issues/40)
+
+## [2.1.8] 2021-07-19
+### Added
+- Adjusted the Jinja2 version
+
+## [2.1.7] 2021-06-13
+### Added
+- Supported build command find protobuf files in /protos, further simplify project structure. [https://github.com/JoshYuJump/bali/tree/main/examples/todos](https://github.com/JoshYuJump/bali/tree/main/examples/todos)
+- Adjust requirement Pydantic version.
+
+## [2.1.6] 2021-05-12
+### Added
+- Supported multi gRPC address configurations
+
+### Fixed
+- Fixed import issues
+
+## [2.0.0] 2021-05-12
+### Added
+- Added `refresh` argument to clear cache
 
 ## [1.1.2] 2021-04-14
 ### Fixed

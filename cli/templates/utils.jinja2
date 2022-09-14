@@ -13,7 +13,7 @@ from grpc import insecure_channel
 from google.protobuf import json_format, __version__ as protobuf__version__
 from google.protobuf.empty_pb2 import Empty
 
-from ._config import GRPC_ADDRESS, MAX_RECURSION_DEPTH
+from ._config import GRPC_ADDRESS
 
 # `GRPC_ADDRESS` is Generic gRPC channel target
 # `GRPC_ADDRESS_EXTENDS` is gRPC channel target specified by service abbreviation
@@ -27,6 +27,12 @@ try:
     from ._config import GRPC_CHANNEL_OPTIONS as CHANNEL_OPTIONS
 except ImportError:
     CHANNEL_OPTIONS = None
+
+# ProtobufParser max_recursion_depth
+try:
+    from ._config import MAX_RECURSION_DEPTH
+except ImportError:
+    MAX_RECURSION_DEPTH = 99
 
 
 # All RPC clients inherited from the `ClientMixin`
