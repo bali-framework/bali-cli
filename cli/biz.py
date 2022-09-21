@@ -32,8 +32,23 @@ def prepare_current_repo(work_dir: Path) -> Path:
 
 
 def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
+    """Compile protobuf to pb2 & pb2_grpc files"""
     options = [f"-I{output_dir}", f"--python_out={output_dir}", f"--grpc_python_out={output_dir}"]
     os.system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_file_name}")
+
+    service = proto_file_name.replace(".proto", "")
+
+    # Modified import in *_pb2_grpc.py files
+    pb2_grpc_file = f'{service}_pb2_grpc.py'
+    pb2_grpc_path: Path = output_dir / pb2_grpc_file
+    with pb2_grpc_path.open(mode="r+") as f:
+        content = f.read()
+        f.seek(0)
+        f.truncate()
+        f.write(content.replace(
+            f'import {service}_pb2 as',
+            f'from . import {service}_pb2 as',
+        ))
 
 
 def compile_client_file(proto_path: Path, service_name: str):
