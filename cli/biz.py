@@ -31,25 +31,27 @@ def prepare_current_repo(work_dir: Path) -> Path:
     return dst_dir
 
 
-def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
+def compile_proto_file(work_dir: Path, output_dir: Path,
+                       proto_file_name: str) -> None:
     """Compile protobuf to pb2 & pb2_grpc files"""
-    options = [f"-I.", f"--python_out=.", f"--grpc_python_out=."]
+    options = [f"-I{work_dir}", f"--python_out={work_dir}",
+               f"--grpc_python_out={work_dir}"]
     proto_path = output_dir / proto_file_name
     os.system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_path}")
 
     service = proto_file_name.replace(".proto", "")
 
     # Modified import in *_pb2_grpc.py files
-    pb2_grpc_file = f'{service}_pb2_grpc.py'
-    pb2_grpc_path: Path = output_dir / pb2_grpc_file
-    with pb2_grpc_path.open(mode="r+") as f:
-        content = f.read()
-        f.seek(0)
-        f.truncate()
-        f.write(content.replace(
-            f'import {service}_pb2 as',
-            f'from . import {service}_pb2 as',
-        ))
+    # pb2_grpc_file = f'{service}_pb2_grpc.py'
+    # pb2_grpc_path: Path = output_dir / pb2_grpc_file
+    # with pb2_grpc_path.open(mode="r+") as f:
+    #     content = f.read()
+    #     f.seek(0)
+    #     f.truncate()
+    #     f.write(content.replace(
+    #         f'import {service}_pb2 as',
+    #         f'from . import {service}_pb2 as',
+    #     ))
 
 
 def compile_client_file(proto_path: Path, service_name: str):
@@ -159,7 +161,7 @@ def add_service(repo_name: str, service: str, target_dir: str) -> None:
         dst_proto_path,
     )
 
-    compile_proto_file(dst_dir, proto_file_name)
+    compile_proto_file(work_dir, dst_dir, proto_file_name)
     compile_client_file(dst_proto_path, service)
     os.system(f"pb2py {dst_dir / f'{service}_pb2.py'} > {dst_dir / f'{service}_schema.py'}")
     create_init_file(dst_dir.parent / "__init__.py")
@@ -190,6 +192,7 @@ def build_service() -> None:
             for i in filenames:
                 file = proto_dir / i
                 if file.suffix == ".proto":
-                    command = base_command.format(dir='.', file=proto_dir / i)
+                    command = base_command.format(dir=current_dir,
+                                                  file=proto_dir / i)
                     typer.echo(command)
                     os.system(command)
