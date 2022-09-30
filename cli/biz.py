@@ -39,20 +39,6 @@ def compile_proto_file(work_dir: Path, output_dir: Path,
     proto_path = output_dir / proto_file_name
     os.system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_path}")
 
-    service = proto_file_name.replace(".proto", "")
-
-    # Modified import in *_pb2_grpc.py files
-    # pb2_grpc_file = f'{service}_pb2_grpc.py'
-    # pb2_grpc_path: Path = output_dir / pb2_grpc_file
-    # with pb2_grpc_path.open(mode="r+") as f:
-    #     content = f.read()
-    #     f.seek(0)
-    #     f.truncate()
-    #     f.write(content.replace(
-    #         f'import {service}_pb2 as',
-    #         f'from . import {service}_pb2 as',
-    #     ))
-
 
 def compile_client_file(proto_path: Path, service_name: str):
     service_pattern = re.compile(r"^service\s+(.*?)\s+{$")
