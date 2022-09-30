@@ -33,8 +33,9 @@ def prepare_current_repo(work_dir: Path) -> Path:
 
 def compile_proto_file(output_dir: Path, proto_file_name: str) -> None:
     """Compile protobuf to pb2 & pb2_grpc files"""
-    options = [f"-I{output_dir}", f"--python_out={output_dir}", f"--grpc_python_out={output_dir}"]
-    os.system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_file_name}")
+    options = [f"-I.", f"--python_out=.", f"--grpc_python_out=."]
+    proto_path = output_dir / proto_file_name
+    os.system(f"python -m grpc_tools.protoc {' '.join(options)} {proto_path}")
 
     service = proto_file_name.replace(".proto", "")
 
@@ -97,7 +98,6 @@ def create_config_file(config_path: Path):
 
 # noinspection PyTypeChecker
 def create_init_file(init_path: Path):
-
     # get custom imports
     custom_imports = []
     try:
@@ -190,6 +190,6 @@ def build_service() -> None:
             for i in filenames:
                 file = proto_dir / i
                 if file.suffix == ".proto":
-                    command = base_command.format(dir=proto_dir, file=i)
+                    command = base_command.format(dir='.', file=proto_dir / i)
                     typer.echo(command)
                     os.system(command)
