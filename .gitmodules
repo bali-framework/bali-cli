@@ -1,0 +1,3 @@
+[submodule "examples/proto"]
+	path = examples/proto
+	url = https://github.com/JoshYuJump/bali-cli-example-proto
