@@ -16,14 +16,14 @@ CLI tools to simplify gRPC services and clients
 
 ## Cli commands 
 
-- `bali add` {service}**
+### `bali add`
 > Add service to clients folder, syntax is **bali add {service}**
 ```bash
 # Example: added a service named `user`
 bali add user
 ```
 
-- `bali build`
+### `bali build`
 > Build current development service protobuf 
 >
 > Legacy protobuf path: <b>/services/rpc/*.proto</b>
@@ -33,7 +33,7 @@ bali add user
 bali build
 ```
 
-- `bali run`
+### `bali run`
 > New in `2.5.0`
 > 
 > Start Bali App service, include `http`/`rpc`/`event`
@@ -46,7 +46,7 @@ bali run rpc
 bali run event
 ```
 
-- `bali shell`
+### `bali shell`
 > New in `2.5.0`
 > 
 ```bash
