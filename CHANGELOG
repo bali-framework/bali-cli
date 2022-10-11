@@ -3,7 +3,11 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [2.5.0] UNRELEASED
+## [2.6.0] UNRELEASED
+
+## [2.5.0] 2022-10-11
+### Added
+- Added Bali App run command and shell command
 
 ## [2.4.0] 2022-10-08
 ### Changed
