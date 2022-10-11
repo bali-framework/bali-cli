@@ -16,7 +16,7 @@ CLI tools to simplify gRPC services and clients
 
 ## Cli commands 
 
-- `bali add` {service}**
+- `bali add`
 > Add service to clients folder, syntax is **bali add {service}**
 ```bash
 # Example: added a service named `user`
