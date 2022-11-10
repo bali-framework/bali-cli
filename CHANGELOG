@@ -3,7 +3,14 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [2.6.0] UNRELEASED
+## [2.7.0] UNRELEASED
+
+## [2.6.0] 2022-11-10
+### Changed
+- Upgrade grpcio/grpcio-tools
+
+### Breaking changes
+- If your project uses an outdated protobuf you may need to rebuild because all dependencies have been updated
 
 ## [2.5.0] 2022-10-11
 ### Added
