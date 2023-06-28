@@ -170,7 +170,7 @@ def build_service() -> None:
     ]
     base_command = (
         'python3 -m grpc_tools.protoc '
-        ' -I{dir} --python_out={dir} --grpc_python_out={dir} {file}'
+        ' -I{dir} --pyi_out={dir} --python_out={dir} --grpc_python_out={dir} {file}'
     )
 
     for proto_dir in proto_dirs:
