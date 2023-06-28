@@ -3,7 +3,11 @@
 # This project adheres to [Semantic Versioning](http://semver.org/).
 # includes Added / Changed / Fixed
 
-## [2.7.0] UNRELEASED
+## [2.8.0] UNRELEASED
+
+## [2.7.0] 2023-06-28
+### Added
+- Added pyi_out option to build service
 
 ## [2.6.0] 2022-11-10
 ### Changed
